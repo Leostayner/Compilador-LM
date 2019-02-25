@@ -57,6 +57,13 @@ class Parser:
     @staticmethod
     def run(code):
         Parser.tokens = Tokenizer(code)
+        result = Parser.parseExpression()
+        
+        if(Parser.tokens.actual.type == 'EOF'):
+            print(result)
+
+        else:
+            print("last token is not EOP")
     
     @staticmethod
     def parseExpression():
@@ -98,5 +105,3 @@ class Parser:
 
 code = input("Digite uma operação:")
 Parser.run(str(code))
-result = Parser.parseExpression()
-print(result)
