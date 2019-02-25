@@ -63,7 +63,7 @@ class Parser:
             print(result)
 
         else:
-            print("last token is not EOP")
+            print("last token is not EOP, operation syntactic error")
     
     @staticmethod
     def parseExpression():
