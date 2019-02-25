@@ -23,15 +23,15 @@ class Tokenizer:
 
         if self.position == len(self.origin):
             type = "EOF"
-            self.actual = Token(type, newToken)
-
-        else:
-             
+      
+        else: 
             while self.origin[self.position] == " ":
                 self.position += 1
                 
                 if self.position == len(self.origin):
-                        break
+                    type = "EOF"
+                    self.actual = Token(type, newToken)
+                    return
             
             if self.origin[self.position] in signal:
                 newToken = self.origin[self.position]
@@ -48,10 +48,9 @@ class Tokenizer:
                     if self.position == len(self.origin):
                         break
 
-            if newToken.isdigit():
                 type = "int"
             
-            self.actual = Token(type, newToken)
+        self.actual = Token(type, newToken)
         
 class Parser:
 
@@ -79,7 +78,6 @@ class Parser:
                         print("Error: value {0} is not int after signal +".format(Parser.tokens.actual.value))
                         sys.exit()
 
-
                 elif Parser.tokens.actual.value == "-":
                     
                     Parser.tokens.selectNext()
@@ -90,7 +88,6 @@ class Parser:
                         print("Error: value {0} is not int after signal -".format(Parser.tokens.actual.value))
                         print(Parser.tokens.position)
                         sys.exit()
-
 
                 Parser.tokens.selectNext()
         else:
