@@ -2,6 +2,7 @@
 #python3
 
 import sys
+import re
 
 class Token:
 
@@ -17,7 +18,7 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
-        signal = ["+", "-"]
+        signal = ["+", "-", "*", "/"]
         newToken = ""
         type = ""
 
@@ -34,10 +35,16 @@ class Tokenizer:
                     return
             
             if self.origin[self.position] in signal:
+
+                if (self.origin[self.position] in signal[:2]):
+                    type = "signal"
+                
+                else:
+                    type = "signal2"
+
                 newToken = self.origin[self.position]
                 self.position += 1
-                type = "signal"
-
+                
 
             elif(self.origin[self.position].isdigit):
                 while self.origin[self.position].isdigit():
@@ -64,9 +71,9 @@ class Parser:
 
         else:
             print("last token is not EOP, operation syntactic error")
-    
+       
     @staticmethod
-    def parseExpression():
+    def term():
         result = 0
         Parser.tokens.selectNext()
         
@@ -74,22 +81,21 @@ class Parser:
             result = int(Parser.tokens.actual.value)
             Parser.tokens.selectNext()
             
-            while Parser.tokens.actual.type == "signal":
+            while Parser.tokens.actual.type == "signal2":
                         
-                if Parser.tokens.actual.value == "+":
+                if Parser.tokens.actual.value == "*":
                     Parser.tokens.selectNext()
                     if Parser.tokens.actual.type == "int":
-                        result += int(Parser.tokens.actual.value)
+                        result *= int(Parser.tokens.actual.value)
 
                     else:
                         print("Error: value {0} is not int after signal +".format(Parser.tokens.actual.value))
                         sys.exit()
 
-                elif Parser.tokens.actual.value == "-":
-                    
+                elif Parser.tokens.actual.value == "/":
                     Parser.tokens.selectNext()
                     if Parser.tokens.actual.type == "int":
-                        result -= int(Parser.tokens.actual.value)
+                        result /= int(Parser.tokens.actual.value)
                     
                     else:
                         print("Error: value {0} is not int after signal -".format(Parser.tokens.actual.value))
@@ -103,5 +109,30 @@ class Parser:
             
         return result
 
-code = input("Digite uma operação:")
-Parser.run(str(code))
+    
+    @staticmethod
+    def parseExpression():
+        result = Parser.term()
+        while Parser.tokens.actual.type == "signal":
+            
+            if Parser.tokens.actual.value == "+":
+                result += Parser.term()
+
+            elif Parser.tokens.actual.value == "-":
+                result -= Parser.term()
+        
+            Parser.tokens.selectNext()
+
+        return result
+
+
+class PrePro:    
+    @staticmethod
+    def filter(code):
+        return re.sub("'(.*?)\n", '', code)
+
+code = input("Digite uma operação: ") + "\n"
+code = PrePro.filter(code)
+
+if len(code) > 0:
+    Parser.run(str(code))
