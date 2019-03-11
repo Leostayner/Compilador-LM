@@ -41,7 +41,7 @@ class Tokenizer:
                 
                 else:
                     type = "signal2"
-
+                  
                 newToken = self.origin[self.position]
                 self.position += 1
                 
@@ -71,6 +71,8 @@ class Parser:
 
         else:
             print("last token is not EOP, operation syntactic error")
+            print(Parser.tokens.actual.type)
+            print(Parser.tokens.actual.value)
        
     @staticmethod
     def term():
@@ -89,7 +91,7 @@ class Parser:
                         result *= int(Parser.tokens.actual.value)
 
                     else:
-                        print("Error: value {0} is not int after signal +".format(Parser.tokens.actual.value))
+                        print("Error: value {0} is not int after signal *".format(Parser.tokens.actual.value))
                         sys.exit()
 
                 elif Parser.tokens.actual.value == "/":
@@ -98,7 +100,7 @@ class Parser:
                         result /= int(Parser.tokens.actual.value)
                     
                     else:
-                        print("Error: value {0} is not int after signal -".format(Parser.tokens.actual.value))
+                        print("Error: value {0} is not int after signal /".format(Parser.tokens.actual.value))
                         print(Parser.tokens.position)
                         sys.exit()
 
@@ -121,15 +123,15 @@ class Parser:
             elif Parser.tokens.actual.value == "-":
                 result -= Parser.term()
         
-            Parser.tokens.selectNext()
-
         return result
 
 
 class PrePro:    
     @staticmethod
     def filter(code):
-        return re.sub("'(.*?)\n", '', code)
+        if("'" not in code):
+            return code[:-1]
+        return re.sub("'.*?\n", ' ', code)
 
 code = input("Digite uma operação: ") + "\n"
 code = PrePro.filter(code)
