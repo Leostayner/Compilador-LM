@@ -18,7 +18,7 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
-        signal = ["+", "-", "*", "/"]
+        ops = ["+", "-", "*", "/", "(", ")"]
         newToken = ""
         type = ""
 
@@ -34,19 +34,12 @@ class Tokenizer:
                     self.actual = Token(type, newToken)
                     return
             
-            if self.origin[self.position] in signal:
-
-                if (self.origin[self.position] in signal[:2]):
-                    type = "signal"
-                
-                else:
-                    type = "signal2"
-                  
-                newToken = self.origin[self.position]
+            if self.origin[self.position] in ops:
+                type = self.origin[self.position]
                 self.position += 1
-                
+                    
 
-            elif(self.origin[self.position].isdigit):
+            elif(self.origin[self.position].isdigit()):
                 while self.origin[self.position].isdigit():
                     newToken += self.origin[self.position]
  
@@ -56,7 +49,7 @@ class Tokenizer:
                         break
 
                 type = "int"
-            
+                
         self.actual = Token(type, newToken)
         
 class Parser:
@@ -64,6 +57,7 @@ class Parser:
     @staticmethod
     def run(code):
         Parser.tokens = Tokenizer(code)
+        Parser.tokens.selectNext()
         result = Parser.parseExpression()
         
         if(Parser.tokens.actual.type == 'EOF'):
@@ -71,57 +65,68 @@ class Parser:
 
         else:
             print("last token is not EOP, operation syntactic error")
-            print(Parser.tokens.actual.type)
-            print(Parser.tokens.actual.value)
-       
+
     @staticmethod
     def term():
-        result = 0
-        Parser.tokens.selectNext()
+        result = Parser.factor()
         
-        if Parser.tokens.actual.type == "int":
-            result = int(Parser.tokens.actual.value)
-            Parser.tokens.selectNext()
-            
-            while Parser.tokens.actual.type == "signal2":
-                        
-                if Parser.tokens.actual.value == "*":
-                    Parser.tokens.selectNext()
-                    if Parser.tokens.actual.type == "int":
-                        result *= int(Parser.tokens.actual.value)
-
-                    else:
-                        print("Error: value {0} is not int after signal *".format(Parser.tokens.actual.value))
-                        sys.exit()
-
-                elif Parser.tokens.actual.value == "/":
-                    Parser.tokens.selectNext()
-                    if Parser.tokens.actual.type == "int":
-                        result /= int(Parser.tokens.actual.value)
+        while Parser.tokens.actual.type == "*" or Parser.tokens.actual.type == "/":
                     
-                    else:
-                        print("Error: value {0} is not int after signal /".format(Parser.tokens.actual.value))
-                        print(Parser.tokens.position)
-                        sys.exit()
+            if Parser.tokens.actual.type == "*":
+                Parser.tokens.selectNext()                    
+                result *= int(Parser.factor())
 
+            elif Parser.tokens.actual.type == "/":
                 Parser.tokens.selectNext()
-        else:
-            print("Error: first value {0} is not a int".format(Parser.tokens.actual.value))
-            sys.exit()
+                result /= int(Parser.factor())
             
         return result
-
     
     @staticmethod
     def parseExpression():
-        result = Parser.term()
-        while Parser.tokens.actual.type == "signal":
+        result = int(Parser.term())
+        while Parser.tokens.actual.type == "+" or Parser.tokens.actual.type == "+":
             
-            if Parser.tokens.actual.value == "+":
-                result += Parser.term()
+            if Parser.tokens.actual.type == "+":
+                Parser.tokens.selectNext()
+                result += int(Parser.term())
 
-            elif Parser.tokens.actual.value == "-":
-                result -= Parser.term()
+            elif Parser.tokens.actual.type == "-":
+                Parser.tokens.selectNext()
+                result -= int(Parser.term())
+                    
+        return result
+
+
+    @staticmethod
+    def factor():
+        result = 0
+        
+        if(Parser.tokens.actual.type == "int"):
+            result = int(Parser.tokens.actual.value) 
+            Parser.tokens.selectNext()
+        
+        elif(Parser.tokens.actual.type == "("):
+            Parser.tokens.selectNext()
+            result = int(Parser.parseExpression())
+
+            if(Parser.tokens.actual.type == ")"):
+                Parser.tokens.selectNext()
+            
+            else:
+                print("Error")
+
+        elif Parser.tokens.actual.type == "+":
+            Parser.tokens.selectNext()
+            result += int(Parser.factor())
+
+        elif Parser.tokens.actual.type == "-": 
+            Parser.tokens.selectNext()
+            result -= int(Parser.factor())
+            
+        else:
+            print("Error")
+            sys.exit()
         
         return result
 
@@ -131,7 +136,8 @@ class PrePro:
     def filter(code):
         if("'" not in code):
             return code[:-1]
-        return re.sub("'.*?\n", ' ', code)
+        return re.sub("('.*?)\n", ' ', code)
+
 
 code = input("Digite uma operação: ") + "\n"
 code = PrePro.filter(code)
