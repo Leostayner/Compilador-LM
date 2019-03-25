@@ -1,4 +1,5 @@
 from token import *
+from node import *
 
 class Parser:
 
@@ -7,73 +8,62 @@ class Parser:
         Parser.tokens = Tokenizer(code)
         Parser.tokens.selectNext()
         result = Parser.parseExpression()
+
         
         if(Parser.tokens.actual.type == 'EOF'):
-            print(result)
+            return result
 
         else:
             raise Exception("Syntactic Error: Last token is not EOP")
 
     @staticmethod
     def term():
-        result = Parser.factor()
-        
+        c0 = Parser.factor()
         while Parser.tokens.actual.type == "*" or Parser.tokens.actual.type == "/":
-                    
-            if Parser.tokens.actual.type == "*":
-                Parser.tokens.selectNext()                    
-                result *= int(Parser.factor())
-
-            elif Parser.tokens.actual.type == "/":
-                Parser.tokens.selectNext()
-                result /= int(Parser.factor())
-            
-        return result
+            token = Parser.tokens.actual.type
+            Parser.tokens.selectNext()                    
+            c0 = BinOp(token, [c0, Parser.factor()])
+        
+        return c0
     
     @staticmethod
     def parseExpression():
-        result = int(Parser.term())
+        c0 = Parser.term()
         while Parser.tokens.actual.type == "+" or Parser.tokens.actual.type == "-":
-            
-            if Parser.tokens.actual.type == "+":
-                Parser.tokens.selectNext()
-                result += int(Parser.term())
-
-            elif Parser.tokens.actual.type == "-":
-                Parser.tokens.selectNext()
-                result -= int(Parser.term())
-                    
-        return result
-
+            token = Parser.tokens.actual.type
+            Parser.tokens.selectNext()
+            c0 = BinOp(token, [c0, Parser.term()])
+                
+        return c0
 
     @staticmethod
     def factor():
-        result = 0
-        
         if(Parser.tokens.actual.type == "int"):
-            result = int(Parser.tokens.actual.value) 
-            Parser.tokens.selectNext()
-        
+            result = IntVal(int(Parser.tokens.actual.value)) 
+            Parser.tokens.selectNext() 
+            return result
+
+
         elif(Parser.tokens.actual.type == "("):
             Parser.tokens.selectNext()
-            result = int(Parser.parseExpression())
+            result = Parser.parseExpression() 
 
             if(Parser.tokens.actual.type == ")"):
                 Parser.tokens.selectNext()
-            
+                return result            
             else:
                 raise Exception("There is no ')' after the expression.")
 
+
         elif Parser.tokens.actual.type == "+":
             Parser.tokens.selectNext()
-            result += int(Parser.factor())
+            return UnOp("+", [Parser.factor()])
+
 
         elif Parser.tokens.actual.type == "-": 
             Parser.tokens.selectNext()
-            result -= int(Parser.factor())
-            
+            return UnOp("-", [Parser.factor()])
+
+
         else:
             raise Exception("Syntactic Error")
-            sys.exit()
-        
-        return result
