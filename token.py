@@ -1,8 +1,8 @@
 class Token:
 
-   def __init__(self, type, value):
-       self.type  = type
-       self.value = value
+    def __init__(self, type, value):
+        self.type  = type
+        self.value = value
 
 class Tokenizer:
 
@@ -12,6 +12,7 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
+        reserved = ["PRINT", "BEGIN", "END"]
         ops = ["+", "-", "*", "/", "(", ")"]
         newToken = ""
         type = ""
@@ -31,7 +32,32 @@ class Tokenizer:
             if self.origin[self.position] in ops:
                 type = self.origin[self.position]
                 self.position += 1
-                    
+
+            elif self.origin[self.position] == "\n":
+                type = "endLine"
+                self.position += 1
+
+            elif self.origin[self.position] == "=":
+                newToken = "="
+                type = "assig"
+                self.position += 1
+
+
+            elif self.origin[self.position].isalpha():
+                while self.origin[self.position].isalpha():
+                    newToken += self.origin[self.position]
+
+                    self.position += 1
+                
+                    if self.position == len(self.origin):
+                        break
+                
+                if newToken in reserved:
+                    type = "reserved"
+                
+                else:
+                    type = "char"
+
 
             elif(self.origin[self.position].isdigit()):
                 while self.origin[self.position].isdigit():

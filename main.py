@@ -8,19 +8,18 @@ from parser import *
 
 def readFile(file_name):
     with open(file_name, 'r') as f:
-        return ''.join(f.readlines())
-      
+        lines = [line for line in f.readlines() if line.strip()]
+        return ''.join(lines)
+       
 def main():
     try:
-        code = readFile(sys.argv[1]) + "\n"    
+        code = readFile(sys.argv[1])
         code = PrePro.filter(code)
-        print(code)
-        if len(code) > 0:
-                print("Operação: {0}".format(code))
+        if len(code) > 0: 
                 result = Parser.run(str(code))
-                print(result.Evaluate(), "\n")
+                result.Evaluate()
 
     except Exception as err:
-        print(err, "\n")
+        print(err)
 
-main() 
+main()
