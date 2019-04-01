@@ -12,8 +12,9 @@ def readFile(file_name):
       
 def main():
     try:
-        code = readFile(sys.argv[1])    
+        code = readFile(sys.argv[1]) + "\n"    
         code = PrePro.filter(code)
+        print(code)
         if len(code) > 0:
                 print("Operação: {0}".format(code))
                 result = Parser.run(str(code))
