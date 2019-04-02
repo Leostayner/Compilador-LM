@@ -1,8 +1,8 @@
 # Compilador-LM
 
-![Diagrama](./Imgs/Diagrama1.png)
-![Diagrama2](./Imgs/Diagrama2.png)
-![Diagrama3](./Imgs/Diagrama3.png)
-![Diagrama4](./Imgs/Diagrama4.png)
-![Diagrama5](./Imgs/Diagrama5.png)
+![Diagrama](./Imgs/D1.png)
+![Diagrama2](./Imgs/D2.png)
+![Diagrama3](./Imgs/D33.png)
+![Diagrama4](./Imgs/D4.png)
+![Diagrama5](./Imgs/D5.png)
 ![EBNF](./Imgs/EBNF.PNG)
