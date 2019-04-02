@@ -5,4 +5,4 @@
 ![Diagrama3](./Imgs/D33.png)
 ![Diagrama4](./Imgs/D4.png)
 ![Diagrama5](./Imgs/D5.png)
-![EBNF](./Imgs/EBNF.PNG)
+![EBNF](./Imgs/ebnf.PNG)
