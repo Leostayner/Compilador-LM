@@ -101,6 +101,11 @@ class Parser:
         elif(Parser.tokens.actual.value == "WHILE"):
             Parser.tokens.selectNext()
             c0 = Parser.relExpression()
+            
+            if(Parser.tokens.actual.type != "endLine"):
+                raise Exception("Error: '{0}' is not endLien".format(Parser.tokens.actual.type))
+            
+            Parser.tokens.selectNext()
             c1 = Parser.statements()
 
             if(Parser.tokens.actual.value != "WEND"):
@@ -119,13 +124,23 @@ class Parser:
                 raise Exception("Error: '{0}' is not THEN".format(Parser.tokens.actual.value))
             
             Parser.tokens.selectNext()
+            
+            if(Parser.tokens.actual.type != "endLine"):
+                raise Exception("Error: '{0}' is not endLine".format(Parser.tokens.actual.type))
+        
+            Parser.tokens.selectNext()
             l.append(Parser.statements())
-
+            
             
             if(Parser.tokens.actual.value == "ELSE"):
                 Parser.tokens.selectNext()
+            
+                if(Parser.tokens.actual.type != "endLine"):
+                    raise Exception("Error: '{0}' is not endLine".format(Parser.tokens.actual.type))
+                
+                Parser.tokens.selectNext()
                 l.append(Parser.statements())
-
+                
 
             if(Parser.tokens.actual.value == "END"):
                 Parser.tokens.selectNext()
@@ -150,8 +165,10 @@ class Parser:
 
         while Parser.tokens.actual.type == "endLine":
             Parser.tokens.selectNext()
-            list_c.append(Parser.statement())
-        
+
+            if(Parser.tokens.actual.value not in["END", "ELSE", "WEND"]):
+                list_c.append(Parser.statement())
+
         return Stat("Statements", list_c)
 
 
