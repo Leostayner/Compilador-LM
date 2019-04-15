@@ -24,7 +24,7 @@
 ![Diagrama6](./Imgs/TERM.png)
 <br>
 
-### Compiler EBNF:
+### Compiler EBNF
 
 statements = statement {\n , statement };
 
