@@ -120,3 +120,9 @@ class ifOp(Node):
         elif len(self.children) == 3:
             self.children[2].Evaluate()
 
+class InputOp(Node):
+    def __init__(self, value):
+        self.value     = value 
+         
+    def Evaluate(self):
+        return int(input("Input: "))

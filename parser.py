@@ -72,8 +72,10 @@ class Parser:
 
 
         elif(Parser.tokens.actual.value == "INPUT"):
-
-            ##Node input a definir --------- 
+            var = InputOp("input")
+            Parser.tokens.selectNext() 
+            return var 
+            
 
         else:
             raise Exception("Syntactic Error")
@@ -135,8 +137,7 @@ class Parser:
 
             else:
                 raise Exception("Error: '{0}' is not End".format(Parser.tokens.actual.value))
-            ##Node input a definir ---------
-
+           
 
             return ifOp("if", l)
 

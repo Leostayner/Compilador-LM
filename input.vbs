@@ -1,5 +1,5 @@
 a = 10
-b = 20
+b = input
 c = 1 
 
 if a = b then print 1 else print 2 end if
