@@ -28,6 +28,17 @@ class BinOp(Node):
         elif self.value == "-":
             return self.children[0].Evaluate() - self.children[1].Evaluate()
         
+        elif self.value == "=":
+            return self.children[0].Evaluate() == self.children[1].Evaluate()
+
+        elif self.value == ">":
+            return self.children[0].Evaluate() > self.children[1].Evaluate()
+        
+        elif self.value == "<":
+            return self.children[0].Evaluate() < self.children[1].Evaluate()
+
+
+
         
 class AssOP(Node):
     def __init__(self, value, children):
@@ -82,9 +93,30 @@ class Stat(Node):
 
 
 class NoOp(Node):
+    
+    def Evaluate(self):
+        pass
+
+
+class WhileOp(Node):
     def __init__(self, value, children):
         self.value     = value 
         self.children  = children
          
     def Evaluate(self):
-        pass
+        while(self.children[0].Evaluate()):
+            self.children[1].Evaluate()
+
+
+class ifOp(Node):
+    def __init__(self, value, children):
+        self.value     = value 
+        self.children  = children
+         
+    def Evaluate(self):
+        if(self.children[0].Evaluate()):
+            self.children[1].Evaluate()
+            
+        elif len(self.children) == 3:
+            self.children[2].Evaluate()
+

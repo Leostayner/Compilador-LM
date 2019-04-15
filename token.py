@@ -12,9 +12,9 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
-        reserved = ["PRINT", "BEGIN", "END"]
-        ops = ["+", "-", "*", "/", "(", ")"]
-        newToken = ""
+        reserved = ["PRINT", "BEGIN", "END", "WHILE", "IF"]
+        ops = ["=", "+", "-", "*", "/", "(", ")", ">", "<"]
+        value = ""
         type = ""
 
         if self.position == len(self.origin):
@@ -26,33 +26,28 @@ class Tokenizer:
                 
                 if self.position == len(self.origin):
                     type = "EOF"
-                    self.actual = Token(type, newToken)
+                    self.actual = Token(type, value)
                     return
             
             if self.origin[self.position] in ops:
-                type = self.origin[self.position]
+                value = self.origin[self.position]
                 self.position += 1
 
             elif self.origin[self.position] == "\n":
                 type = "endLine"
                 self.position += 1
 
-            elif self.origin[self.position] == "=":
-                newToken = "="
-                type = "assig"
-                self.position += 1
-
 
             elif self.origin[self.position].isalpha():
                 while self.origin[self.position].isalpha():
-                    newToken += self.origin[self.position]
+                    value += self.origin[self.position]
 
                     self.position += 1
                 
                     if self.position == len(self.origin):
                         break
                 
-                if newToken in reserved:
+                if value in reserved:
                     type = "reserved"
                 
                 else:
@@ -61,7 +56,7 @@ class Tokenizer:
 
             elif(self.origin[self.position].isdigit()):
                 while self.origin[self.position].isdigit():
-                    newToken += self.origin[self.position]
+                    value += self.origin[self.position]
  
                     self.position += 1
                     
@@ -70,4 +65,4 @@ class Tokenizer:
 
                 type = "int"
                 
-        self.actual = Token(type, newToken)
+        self.actual = Token(type, value)
