@@ -17,7 +17,7 @@
 <br>
 
 ### Statemants
-![Diagrama5](./Imgs/STATEMANTS.png)
+![Diagrama5](./Imgs/STATEMENTS.png)
 <br>
 
 ### Term
