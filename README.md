@@ -13,7 +13,7 @@
 <br>
 
 ### Statemant
-![Diagrama4](./Imgs/STATEMANT.png)
+![Diagrama4](./Imgs/STATEMENT.png)
 <br>
 
 ### Statemants
