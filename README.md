@@ -1,14 +1,14 @@
 # Compilador-LM
 
-###Expression
+### Expression
 ![Diagrama](./Imgs/EXPRESSION.png)
 <br>
 
-###Factor
+### Factor
 ![Diagrama2](./Imgs/FACTOR.png)
 <br>
 
-###Rel Expression
+### Rel Expression
 ![Diagrama3](./Imgs/REL_EXPRESSION.png)
 <br>
 
