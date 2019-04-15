@@ -1,8 +1,9 @@
 # Compilador-LM
 
-![Diagrama](./Imgs/D1.png)
-![Diagrama2](./Imgs/D2.png)
-![Diagrama3](./Imgs/D3.PNG)
-![Diagrama4](./Imgs/D4.png)
-![Diagrama5](./Imgs/D5.png)
+![Diagrama](./Imgs/EXPRESSION.png)
+![Diagrama2](./Imgs/FACTOR.png)
+![Diagrama3](./Imgs/REL_EXPRESSION.PNG)
+![Diagrama4](./Imgs/STATEMANT.png)
+![Diagrama5](./Imgs/STATEMANTS.png)
+![Diagrama6](./Imgs/TERM.png)
 ![EBNF](./Imgs/_ebnf.PNG)
