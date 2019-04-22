@@ -1,17 +1,16 @@
 a = 10
-b = input
-c = 1 
+b = 20
+c = input
 
-if a = b then 
-print 1
+if a < b then
+    if b < c then
+        ' test comment
 
-else 
-print 2 
+        while c > 0
+            ' hello
 
+            print c
+            c = c-5
+        wend
+    end if
 end if
-
-while a < b 
-
-a = a + c	
-print a 
-wend
