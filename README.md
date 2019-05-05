@@ -1,28 +1,33 @@
 # Compilador-LM
 
-### Expression
-![Diagrama](./Imgs/EXPRESSION.png)
+### Program
+![Diagrama1](./Imgs/PROGRAM.png)
 <br>
 
-### Factor
-![Diagrama2](./Imgs/FACTOR.png)
+### Statement
+![Diagrama2](./Imgs/STATEMENT.png)
 <br>
 
 ### Rel Expression
 ![Diagrama3](./Imgs/REL_EXPRESSION.png)
 <br>
 
-### Statement
-![Diagrama4](./Imgs/STATEMENT.png)
-<br>
-
-### Statements
-![Diagrama5](./Imgs/STATEMENTS.png)
+### Expression
+![Diagrama4](./Imgs/EXPRESSION.png)
 <br>
 
 ### Term
-![Diagrama6](./Imgs/TERM.png)
+![Diagrama5](./Imgs/TERM.png)
 <br>
+
+### Factor
+![Diagrama6](./Imgs/FACTOR.png)
+<br>
+
+### Type
+![Diagrama7](./Imgs/TYPE.png)
+<br>
+
 
 ### Compiler EBNF
 
