@@ -1,3 +1,4 @@
+SUB MAIN ()
 a = 10
 b = 20
 c = input
@@ -8,9 +9,10 @@ if a < b then
 
         while c > 0
             ' hello
-
             print c
             c = c-5
         wend
     end if
 end if
+
+END SUB

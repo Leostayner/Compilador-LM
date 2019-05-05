@@ -37,8 +37,6 @@ class BinOp(Node):
         elif self.value == "<":
             return self.children[0].Evaluate() < self.children[1].Evaluate()
 
-
-
         
 class AssOP(Node):
     def __init__(self, value, children):
@@ -59,6 +57,7 @@ class UnOp(Node):
         elif self.value == "-"     : return - int(self.children[0].Evaluate())
         elif self.value == "PRINT" : print(self.children[0].Evaluate())
 
+
 class IntVal(Node):
     def __init__(self, value):
         self.value     = value
@@ -74,7 +73,7 @@ class CharVal(Node):
     def Evaluate(self):
         return tb.get(self.value)
 
-class Var(Node):
+class Identifier(Node):
     def __init__(self, value):
         self.value     = value
  
@@ -82,7 +81,7 @@ class Var(Node):
         return self.value
 
 
-class Stat(Node):
+class Stmts(Node):
     def __init__(self, value, children):
         self.value     = value 
         self.children  = children

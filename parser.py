@@ -7,7 +7,8 @@ class Parser:
     def run(code):
         Parser.tokens = Tokenizer(code)
         Parser.tokens.selectNext()
-        result = Parser.statements()
+        result = Parser.program()
+        
         if(Parser.tokens.actual.type == "endLine"):
             Parser.tokens.selectNext()
 
@@ -17,6 +18,21 @@ class Parser:
         else:
             raise Exception("Syntactic Error: Last token is not EOP")
 
+    
+    def checkType(type, textError):
+        if(Parser.tokens.actual.type != type):
+            raise Exception(textError)
+
+        Parser.tokens.selectNext()
+    
+
+    def checkValue(value, textError):
+        if(Parser.tokens.actual.value != value):
+            raise Exception(textError)
+        
+        Parser.tokens.selectNext()
+        
+    
     @staticmethod
     def term():
         c0 = Parser.factor()
@@ -34,155 +50,156 @@ class Parser:
             value = Parser.tokens.actual.value
             Parser.tokens.selectNext()
             c0 = BinOp(value, [c0, Parser.term()])
-                
         return c0
 
     @staticmethod
     def factor():
         if(Parser.tokens.actual.type == "int"):
             result = IntVal(int(Parser.tokens.actual.value)) 
-            Parser.tokens.selectNext() 
+            Parser.tokens.selectNext()
             return result
 
+        elif (Parser.tokens.actual.value in ["TRUE" , "FALSE"]):
+            temp = Parser.tokens.actual.value
+            Parser.tokens.selectNext()
+            return BolOP(temp)
 
         elif(Parser.tokens.actual.value == "("):
             Parser.tokens.selectNext()
             result = Parser.parseExpression() 
 
-            if(Parser.tokens.actual.value != ")"):
-                raise Exception("There is no ')' after the expression.")
-
-            Parser.tokens.selectNext()
+            Parser.checkValue(")" , "There is no ')' after the expression." )
             return result            
             
-        elif Parser.tokens.actual.value == "+":
+        elif (Parser.tokens.actual.value in ["+", "-", "NOT"] ):
+            temp = Parser.tokens.actual.value
             Parser.tokens.selectNext()
-            return UnOp("+", [Parser.factor()])
-
-
-        elif Parser.tokens.actual.value == "-": 
-            Parser.tokens.selectNext()
-            return UnOp("-", [Parser.factor()])
-
+            return UnOp(temp, [Parser.factor()])
 
         elif Parser.tokens.actual.type == "char":
-            var = Parser.tokens.actual.value
+            idt = Parser.tokens.actual.value
             Parser.tokens.selectNext()
-            return CharVal(var)
+            return CharVal(idt)
 
 
         elif(Parser.tokens.actual.value == "INPUT"):
-            var = InputOp("input")
+            inp = InputOp("input")
             Parser.tokens.selectNext() 
-            return var 
-            
+            return inp 
 
         else:
-            raise Exception("Syntactic Error")
+            raise Exception("Factor : Syntactic Error")
 
     @staticmethod
     def statement():
-        if(Parser.tokens.actual.type == "char"):
-            var = Var(Parser.tokens.actual.value)
+        ## Start IF token
+        if(Parser.tokens.actual.value == "IF"):
             Parser.tokens.selectNext()
+            l_if = [Parser.relExpression()]
+
+            Parser.checkValue("THEN", "Error: '{0}' is not THEN".format(Parser.tokens.actual.value) )
+            Parser.checkType("endLine", "Error: '{0}' is not endLine".format(Parser.tokens.actual.type))
+
+            l1 = []
+            while(Parser.tokens.actual.value not in ["END", "ELSE"] ):
+                l1.append(Parser.statement())
+                Parser.checkType("endLine", "Syntatic Erro: Not endLine")
             
-            if(Parser.tokens.actual.value != "="):
-                raise Exception("Error: '{0}' is not = after identifier".format(Parser.tokens.actual.value))
+            l_if.append(Stmts("STATEMENTS", l1))
+
             
+            if Parser.tokens.actual.value == "ELSE":    
+                l2 = []
+                Parser.tokens.selectNext()
+                Parser.checkType("endLine", "Error not is endLine") 
+
+                while(Parser.tokens.actual.value != "END" ):
+                    l2.append(Parser.statement())
+                    Parser.checkType("endLine", "Syntatic Erro: Not endLine")    
+                
+                l_if.append(l2)
+
             Parser.tokens.selectNext()
-            return AssOP("=", [var, Parser.parseExpression()])
+            Parser.checkValue("IF", "Syntatic Error: not if")
+
+            return ifOp("if", l_if)
+
+
+        ## Start IDENT token
+        elif(Parser.tokens.actual.type == "char"):
+            idt = Identifier(Parser.tokens.actual.value)
+            Parser.tokens.selectNext()
         
+            Parser.checkValue("=", "Error: '{0}' is not = after identifier".format(Parser.tokens.actual.value))
+            
+            return AssOP("=", [idt, Parser.relExpression()])
         
+
+        ## Start PRINT Token
         elif(Parser.tokens.actual.value == "PRINT"):
             Parser.tokens.selectNext()
             return UnOp("PRINT", [Parser.parseExpression()])
 
         
+        #Start WHILE Token
         elif(Parser.tokens.actual.value == "WHILE"):
             Parser.tokens.selectNext()
             c0 = Parser.relExpression()
             
-            if(Parser.tokens.actual.type != "endLine"):
-                raise Exception("Error: '{0}' is not endLien".format(Parser.tokens.actual.type))
-            
-            Parser.tokens.selectNext()
-            c1 = Parser.statements()
+            Parser.checkType("endLine", "Error: '{0}' is not endLien".format(Parser.tokens.actual.type))
 
-            if(Parser.tokens.actual.value != "WEND"):
-                raise Exception("Error: '{0}' is not WEND".format(Parser.tokens.actual.value))
-                            
-            Parser.tokens.selectNext()
-            
-            return WhileOp("WHILE", [c0, c1])
+            l = []
+            while(Parser.tokens.actual.value != "WEND"):
+                l.append(Parser.statement())
+                Parser.checkType("endLine", "Syntatic Error : not is endLine")
 
-        
-        elif(Parser.tokens.actual.value == "IF"):
-            Parser.tokens.selectNext()
-            l = [Parser.relExpression()]
-
-            if(Parser.tokens.actual.value != "THEN"):
-                raise Exception("Error: '{0}' is not THEN".format(Parser.tokens.actual.value))
-            
+     
             Parser.tokens.selectNext()
             
-            if(Parser.tokens.actual.type != "endLine"):
-                raise Exception("Error: '{0}' is not endLine".format(Parser.tokens.actual.type))
-        
-            Parser.tokens.selectNext()
-            l.append(Parser.statements())
+            return WhileOp("WHILE", [c0, Stmts("STATEMENTS", l)])
             
-            
-            if(Parser.tokens.actual.value == "ELSE"):
-                Parser.tokens.selectNext()
-            
-                if(Parser.tokens.actual.type != "endLine"):
-                    raise Exception("Error: '{0}' is not endLine".format(Parser.tokens.actual.type))
-                
-                Parser.tokens.selectNext()
-                l.append(Parser.statements())
-                
-
-            if(Parser.tokens.actual.value == "END"):
-                Parser.tokens.selectNext()
-
-                if(Parser.tokens.actual.value != "IF"):
-                    raise Exception("Error: '{0}' is not IF".format(Parser.tokens.actual.value))
-                
-                Parser.tokens.selectNext()
-
-            else:
-                raise Exception("Error: '{0}' is not End".format(Parser.tokens.actual.value))
-           
-
-            return ifOp("if", l)
-
         return
 
+
+
     @staticmethod
-    def statements():
-        list_c =  []
-        list_c.append(Parser.statement())
+    def program():
+        Parser.checkValue("SUB" , "Error not SUB")
+        Parser.checkValue("MAIN", "Error not MAIN")
+        Parser.checkValue("("   , "Error not (")
+        Parser.checkValue(")"   , "Error not )")
+        Parser.checkType("endLine", "Error not endLine1")
+        
+        list_c = []
+        while (Parser.tokens.actual.value != "END"):
+            list_c.append(Parser.statement())
+            Parser.checkType("endLine", "Error not endLine2")
 
-        while Parser.tokens.actual.type == "endLine":
-            Parser.tokens.selectNext()
+        Parser.tokens.selectNext()
 
-            if(Parser.tokens.actual.value not in["END", "ELSE", "WEND"]):
-                list_c.append(Parser.statement())
-
-        return Stat("Statements", list_c)
+        Parser.checkValue("SUB", "Error not SUB")
+        return Stmts("Statement", list_c)
+        
 
 
     @staticmethod
     def relExpression():
         c0 = Parser.parseExpression()
-        
         value = Parser.tokens.actual.value
+        
         if(value in ["=", ">", "<" ]):
             Parser.tokens.selectNext()
+            c1 = Parser.parseExpression()
+            return BinOp(value, [c0, c1])
+        
+        return c0
+
+    @staticmethod
+    def type():
+        value = Parser.tokens.actual.value 
+        if value in ["INTEGER" , "BOLEAN"]:
+            return value   ## Arrumar TIPE ----------------------
+        
         
         else:
-            raise Exception("Syntatic Error: {0} invalid BinOp".format(Parser.tokens.actual.type))
-
-        c1 = Parser.parseExpression()
-       
-        return BinOp(value, [c0, c1])
+            raise  Exception("Syntatic Error : Invalide Type") 

@@ -14,7 +14,6 @@ def readFile(file_name):
 def main():
     try:
         code = readFile(sys.argv[1]).upper()
-        
         code = PrePro.filter(code)
         if len(code) > 0: 
                 result = Parser.run(str(code))
