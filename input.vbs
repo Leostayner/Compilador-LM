@@ -4,12 +4,14 @@ SUB MAIN ()
 din a as boolean
 din b as integer
 din c as integer
+din d as boolean
 
-a = True
+a = True 
 b = 20
 c = input
+d = (a or False) and a 
 
-If a = True then 'teste de comentariao 2
+If d then 'teste de comentariao 2
 
     if c < b then    
         while c < b
