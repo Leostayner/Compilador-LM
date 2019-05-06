@@ -36,7 +36,7 @@ class Parser:
     @staticmethod
     def term():
         c0 = Parser.factor()
-        while Parser.tokens.actual.value in ["*", "/"]:
+        while Parser.tokens.actual.value in ["*", "/", "AND"]:
             value = Parser.tokens.actual.value
             Parser.tokens.selectNext()                    
             c0 = BinOp(value, [c0, Parser.factor()])
@@ -46,7 +46,7 @@ class Parser:
     @staticmethod
     def parseExpression():
         c0 = Parser.term()
-        while Parser.tokens.actual.value in ["+", "-"]:
+        while Parser.tokens.actual.value in ["+", "-", "OR"]:
             value = Parser.tokens.actual.value
             Parser.tokens.selectNext()
             c0 = BinOp(value, [c0, Parser.term()])
@@ -62,7 +62,11 @@ class Parser:
         elif (Parser.tokens.actual.value in ["TRUE" , "FALSE"]):
             temp = Parser.tokens.actual.value
             Parser.tokens.selectNext()
-            return BolOP(temp)
+
+            if(temp == "TRUE"):
+                return BolOP(True)
+            
+            return BolOP(False)
 
         elif(Parser.tokens.actual.value == "("):
             Parser.tokens.selectNext()
@@ -117,7 +121,7 @@ class Parser:
                     l2.append(Parser.statement())
                     Parser.checkType("endLine", "Syntatic Erro: Not endLine")    
                 
-                l_if.append(l2)
+                l_if.append(Stmts("STATEMENTS", l2))
 
             Parser.tokens.selectNext()
             Parser.checkValue("IF", "Syntatic Error: not if")
@@ -158,6 +162,17 @@ class Parser:
             
             return WhileOp("WHILE", [c0, Stmts("STATEMENTS", l)])
             
+        #Start Din
+        elif(Parser.tokens.actual.value == "DIN"):
+            Parser.tokens.selectNext()
+            idt = Parser.tokens.actual.value
+            
+            Parser.checkType("char", "Syntatic Error: not is char")
+            Parser.checkValue("AS", "Syntatic Error : not is AS")
+            
+            return VarDec([Identifier(idt), Parser.Type()])
+
+
         return
 
 
@@ -195,11 +210,10 @@ class Parser:
         return c0
 
     @staticmethod
-    def type():
+    def Type():
         value = Parser.tokens.actual.value 
-        if value in ["INTEGER" , "BOLEAN"]:
-            return value   ## Arrumar TIPE ----------------------
+        if value in ["INTEGER" , "BOOLEAN"]:
+            Parser.tokens.selectNext()
+            return Tp(value)
         
-        
-        else:
-            raise  Exception("Syntatic Error : Invalide Type") 
+        raise  Exception("Syntatic Error : Invalide Type") 

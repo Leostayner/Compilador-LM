@@ -6,5 +6,5 @@ class SymbolsTable:
         if (name in self.dic): return self.dic[name]
         raise Exception("valor nao definido")
 
-    def sett(self, name, value):
-        self.dic[name] = value
+    def sett(self, name, value, type):
+        self.dic[name] = [value, type]

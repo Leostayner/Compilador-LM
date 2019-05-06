@@ -36,7 +36,14 @@ class BinOp(Node):
         
         elif self.value == "<":
             return self.children[0].Evaluate() < self.children[1].Evaluate()
-
+        
+        elif self.value == "OR":
+            return self.children[0].Evaluate() or self.children[1].Evaluate()
+        
+        elif self.value == "AND":
+            return self.children[0].Evaluate() and self.children[1].Evaluate()
+            
+            
         
 class AssOP(Node):
     def __init__(self, value, children):
@@ -44,7 +51,14 @@ class AssOP(Node):
         self.children  = children
  
     def Evaluate(self):
-        tb.sett(self.children[0].Evaluate(), self.children[1].Evaluate())
+        name = self.children[0].Evaluate()
+        tp   = tb.get(name)[1]
+        val  = self.children[1].Evaluate()
+        
+        if(tp != str(type(val))): 
+            raise Exception("Semantic Error: {0} Invalid assigment type".format(name))
+        
+        tb.sett(name, val, tp)
 
 
 class UnOp(Node):
@@ -55,6 +69,7 @@ class UnOp(Node):
     def Evaluate(self):
         if self.value   == "+"     : return + int(self.children[0].Evaluate())
         elif self.value == "-"     : return - int(self.children[0].Evaluate())
+        elif self.value == "NOT"   : return not int(self.children[0].Evaluate())    
         elif self.value == "PRINT" : print(self.children[0].Evaluate())
 
 
@@ -71,7 +86,7 @@ class CharVal(Node):
         self.value     = value
  
     def Evaluate(self):
-        return tb.get(self.value)
+        return tb.get(self.value)[0]
 
 class Identifier(Node):
     def __init__(self, value):
@@ -125,3 +140,34 @@ class InputOp(Node):
          
     def Evaluate(self):
         return int(input("Input: "))
+
+
+class Tp(Node):
+    def __init__(self, value):
+        self.value     = value
+         
+    def Evaluate(self):
+        if self.value == "INTEGER":
+            return "<class 'int'>"
+        
+        elif self.value == "BOOLEAN":
+            return "<class 'bool'>"
+        
+        return self.value
+
+class VarDec(Node):
+    def __init__(self, children):
+        self.children  = children
+       
+    def Evaluate(self):
+        tb.sett(self.children[0].Evaluate(), "" ,self.children[1].Evaluate() )
+        
+class BolOP(Node):
+    def __init__(self, value):
+        self.value     = value
+ 
+    def Evaluate(self):
+        return self.value
+
+
+

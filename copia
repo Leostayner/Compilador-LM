@@ -9,6 +9,7 @@ a = True
 b = 20
 c = input
 
+
 If a = True then 'teste de comentariao 2
 
     if c < b then    
