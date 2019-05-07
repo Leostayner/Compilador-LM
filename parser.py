@@ -70,7 +70,7 @@ class Parser:
 
         elif(Parser.tokens.actual.value == "("):
             Parser.tokens.selectNext()
-            result = Parser.parseExpression() 
+            result = Parser.relExpression() 
 
             Parser.checkValue(")" , "There is no ')' after the expression." )
             return result            
