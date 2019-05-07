@@ -31,26 +31,66 @@
 
 ### Compiler EBNF
 
-statements = statement {\n , statement };
+program 
+    : SUB, MAIN, "(", ")", endline {statement, endline}, END, SUB
+    ;
 
-statement =  | num, "=", ecpression | print, expression, while, rel_expression, statements, wend | if, rel_expression, if, statements, {else, statements}, end, if; 
+statement   
+    : IF, rel_expression, THEN, endline, {statement, endline}* ,{else, endline, {statement, endline}} , END , IF 
+    | identifier, "=", rel_expression 
+    | print, rel_expression
+    | DIN, identifier, AS, type
+    | WHILE, rel_expression, endline, {statement, endline}*, WEND 
+    ;
 
-print = "print", expression ;
+rel_expression 
+    : expression, { ("=" | ">" | <), expression } 
+    ;
 
-expression = term, { ("+" | "-" | or), term } ;
+expression 
+    : term, { ("+" | "-" | or), term } 
+    ;
 
-rel_expression = expression, { ("=" | ">" | <), expression } ;
+term 
+    : fator, { ("*" | "/"| and), fator } 
+    ;
 
-term = fator, { ("*" | "/"| and), fator } ;
+factor 
+    : ("+" | "-" | not), fator 
+    | num 
+    | "(", rel_expression, ")" 
+    | identifier 
+    | input 
+    | (True | False)
+    ;
 
-fator = ("+" | "-" | not), fator | num | "(", expression, ")" | identifier |input ;
+identifier 
+    : letter, { letter | digit | "_" } 
+    ;
 
-identifier = letter, { letter | digit | "_" } ;
+type
+    : (Integer | boolean)
+    ;
 
-assignment = identifier, "=", expression ;
+assignment 
+    : identifier, "=", expression 
+    ;
 
-num = digit, { digit } ;
+print 
+    : "print", expression 
+    ;
 
-letter = ( a | ... | z | A | ... | Z ) ;
+num 
+    : digit, { digit } 
+    ;
 
-digit = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
+endline 
+    : \n
+
+letter 
+    : ( a | ... | z | A | ... | Z ) 
+    ;
+
+digit 
+    : ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) 
+    ;
