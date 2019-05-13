@@ -1,33 +1,42 @@
-SUB MAIN ()
+Sub main()
+    ' adaptado da sabrina
 
-'teste de comentariao
-din a as boolean
-din b as integer
-din c as integer
-din d as boolean
+    dim fizz as integer
+    dim buzz as integer
+    dim fizzbuzz as integer
+    dim n as integer
+    dim tres as integer
+    dim cinco as integer
+    dim flag as boolean
 
-a = True 
-b = 20
-c = input
-d = (a or False) and a 
+    n = INPUT
+    fizz = 0000
+    buzz = 1111
+    fizzbuzz = 00001111
+    flag = True
 
-If d then 'teste de comentariao 2
+    while n > 0
+        tres = (n - (n / 3 * 3))
+        cinco = (n - (n / 5 * 5))
 
-    if c < b then    
-        while c < b
-            'teste de comentariao 3
-            c = c + 1
-            print c
-        wend
+        print n
 
-    else
-    
-        while c > b
-            c = c - 1
-            print c
-        wend
-    
-    end if
+        if (tres = 0) and (cinco = 0) then
+            print fizzbuzz
+            flag = False
+        end if
 
-end if
-END SUB
+        if (tres = 0) and (flag = True) then
+            print fizz
+            flag = False
+        end if
+
+        if (cinco = 0) and (flag = True) then
+            print buzz
+            flag = False
+        end if
+
+        flag = True
+        n = n - 1
+    wend
+end sub

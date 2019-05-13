@@ -162,8 +162,8 @@ class Parser:
             
             return WhileOp("WHILE", [c0, Stmts("STATEMENTS", l)])
             
-        #Start Din
-        elif(Parser.tokens.actual.value == "DIN"):
+        #Start Dim
+        elif(Parser.tokens.actual.value == "DIM"):
             Parser.tokens.selectNext()
             idt = Parser.tokens.actual.value
             

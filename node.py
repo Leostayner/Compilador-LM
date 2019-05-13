@@ -17,7 +17,7 @@ class BinOp(Node):
  
     def Evaluate(self):
         if self.value == "/":
-            return self.children[0].Evaluate() / self.children[1].Evaluate()
+            return self.children[0].Evaluate() // self.children[1].Evaluate()
 
         elif self.value == "*":
             return self.children[0].Evaluate() * self.children[1].Evaluate()
@@ -56,7 +56,7 @@ class AssOP(Node):
         val  = self.children[1].Evaluate()
         
         if(tp != str(type(val))): 
-            raise Exception("Semantic Error: {0} Invalid assigment type".format(name))
+            raise Exception("Semantic Error: {0} Invalid assigment type : {1}".format(name, str(type(val)) ))
         
         tb.sett(name, val, tp)
 
