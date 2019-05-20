@@ -13,7 +13,7 @@ def readFile(file_name):
         return ''.join(lines)
        
 def main():
-    #try:
+    try:
         code = readFile(sys.argv[1]).upper()
         code = PrePro.filter(code)
         
@@ -25,7 +25,7 @@ def main():
                 with open("program.asm", "w") as f: 
                         f.write(asb.textASB) 
 
-    #except Exception as err:
-    #    print(err)
+    except Exception as err:
+        print(err)
 
 main()

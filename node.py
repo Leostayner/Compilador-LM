@@ -32,11 +32,11 @@ class BinOp(Node):
         
     
         if self.value == "/":
-            asb.arithmeticASB("DIV")
+            asb.i_arithmeticASB("IDIV")
             return c1 // c2
 
         elif self.value == "*":
-            asb.arithmeticASB("IMUL")
+            asb.i_arithmeticASB("IMUL")
             return c1 * c2
 
         elif self.value == "+":
@@ -119,7 +119,6 @@ class Stmts(Node):
          
     def Evaluate(self):
         for element in self.children:
-            asb.write("\n")
             element.Evaluate()
 
 class NoOp(Node):
@@ -150,7 +149,7 @@ class ifOp(Node):
             self.children[1].Evaluate()
         
         asb.write("LABEL_" + str(self._id))   
-        elif len(self.children) == 3:
+        if (not condition and len(self.children)) == 3:
             self.children[2].Evaluate()
 
 class InputOp(Node):

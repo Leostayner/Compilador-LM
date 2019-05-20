@@ -8,14 +8,21 @@ class Assembler:
         self.textASB += text 
 
     def variableASB(self, variable, type, index):
-        st = "PUSH DWORD 0; Dim {0} as {1} [EBP-{2}]".format(variable, type, index)
+        st = "PUSH DWORD 0; Dim {0} as {1} [EBP-{2}]\n".format(variable.lower(), type.lower(), index)
         self.textASB += st
     
     def arithmeticASB(self, op):
         st = ("{0} EAX, EBX\n"
               "MOV EBX, EAX\n").format(op)
         self.textASB += st
-        
+
+    def i_arithmeticASB(self, op):
+        st = ("{0} EBX\n"
+              "MOV EBX, EAX\n").format(op)
+        self.textASB += st
+    
+
+
 #    def assignmentASB(self, value, index):
 #        st = ("\nMOV EBX, {0}\n"
 #              "MOV [EBP-{1}] , EBX\n").format(value, index)
@@ -38,7 +45,7 @@ class Assembler:
             st = ("JE EXIT_{0}\n").format(numberLoop)
             
         elif(state == "end"):
-            st = ("JE LOOP_{0}\n"
+            st = ("JMP LOOP_{0}\n"
                   "EXIT_{0}:\n").format(numberLoop)
         self.textASB += st
 
