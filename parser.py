@@ -162,15 +162,15 @@ class Parser:
             
             return WhileOp("WHILE", [c0, Stmts("STATEMENTS", l)])
             
-        #Start Din
-        elif(Parser.tokens.actual.value == "DIN"):
+        #Start Dim
+        elif(Parser.tokens.actual.value == "DIM"):
             Parser.tokens.selectNext()
             idt = Parser.tokens.actual.value
             
             Parser.checkType("char", "Syntatic Error: not is char")
             Parser.checkValue("AS", "Syntatic Error : not is AS")
             
-            return VarDec([Identifier(idt), Parser.Type()])
+            return VarDec(children = [Identifier(idt), Parser.Type()])
 
 
         return

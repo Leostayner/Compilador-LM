@@ -1,173 +1,179 @@
 from table import * 
+from assembler import *
 
-tb = SymbolsTable()
+tb  = SymbolsTable()
+asb = Assembler()
 
 class Node:
-    def __init__(self):
-        self.value      #variant
-        self.children   #list of nodes
+
+    i = 0
+    def __init__(self, value = False, children = []):
+        self.value      = value         #value
+        self.children   = children      #list of nodes
+        self._id        = self.newId() 
 
     def Evaluate(self):
         pass
+    
+    #@staticmethod
+    def newId(self):
+        Node.i += 1
+        return Node.i
+        
 
 class BinOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
- 
+    
     def Evaluate(self):
+        c1 = self.children[0].Evaluate()
+        asb.write( ("PUSH EBX\n") )
+              
+        c2 = self.children[1].Evaluate()
+        asb.write( ("POP EAX\n") ) 
+        
+    
         if self.value == "/":
-            return self.children[0].Evaluate() / self.children[1].Evaluate()
+            asb.arithmeticASB("DIV")
+            return c1 // c2
 
         elif self.value == "*":
-            return self.children[0].Evaluate() * self.children[1].Evaluate()
+            asb.arithmeticASB("IMUL")
+            return c1 * c2
 
         elif self.value == "+":
-            return self.children[0].Evaluate() + self.children[1].Evaluate()
+            asb.arithmeticASB("ADD")
+            return c1 + c2
 
         elif self.value == "-":
-            return self.children[0].Evaluate() - self.children[1].Evaluate()
-        
-        elif self.value == "=":
-            return self.children[0].Evaluate() == self.children[1].Evaluate()
+            asb.arithmeticASB("SUB")
+            return c1 - c2        
 
+        ## Ajustar assembler
+        elif self.value == "=":
+            asb.conditionalASB("binop_je")
+            return c1 == c2
+        
         elif self.value == ">":
-            return self.children[0].Evaluate() > self.children[1].Evaluate()
+            asb.conditionalASB("binop_jg")
+            return c1 > c2
         
         elif self.value == "<":
-            return self.children[0].Evaluate() < self.children[1].Evaluate()
+            asb.conditionalASB("binop_jl")
+            return c1 < c2
         
         elif self.value == "OR":
-            return self.children[0].Evaluate() or self.children[1].Evaluate()
+            asb.arithmeticASB("OR")
+            return c1 or c2
         
         elif self.value == "AND":
-            return self.children[0].Evaluate() and self.children[1].Evaluate()
-            
-            
+            asb.arithmeticASB("AND")
+            return c1 and c2
+
         
 class AssOP(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
- 
+
     def Evaluate(self):
+        tp_tranformer = {"INTEGER": "<class 'int'>", "BOOLEAN": "<class 'bool'>"}
+        
         name = self.children[0].Evaluate()
-        tp   = tb.get(name)[1]
         val  = self.children[1].Evaluate()
         
-        if(tp != str(type(val))): 
+        tp   = tb.get(name)[1]
+        
+        if(tp_tranformer[tp] != str(type(val))): 
             raise Exception("Semantic Error: {0} Invalid assigment type".format(name))
         
         tb.sett(name, val, tp)
-
-
+        asb.write("MOV [EBP-{0}], EBX\n".format(tb.get(name)[2]))
+        
 class UnOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
- 
+    
     def Evaluate(self):
-        if self.value   == "+"     : return + int(self.children[0].Evaluate())
-        elif self.value == "-"     : return - int(self.children[0].Evaluate())
-        elif self.value == "NOT"   : return not int(self.children[0].Evaluate())    
-        elif self.value == "PRINT" : print(self.children[0].Evaluate())
+        c = self.children[0].Evaluate()
 
+        if   self.value == "+"     : return + int(c)
+        elif self.value == "-"     : return - int(c)
+        elif self.value == "NOT"   : return not int(c)    
+
+        elif self.value == "PRINT" : asb.printASB()
 
 class IntVal(Node):
-    def __init__(self, value):
-        self.value     = value
- 
+    
     def Evaluate(self):
+        asb.write( ("MOV EBX, ") ) 
+        asb.write(str(self.value) + "\n")
         return self.value
-
 
 class CharVal(Node):
-    def __init__(self, value):
-        self.value     = value
- 
+    
     def Evaluate(self):
-        return tb.get(self.value)[0]
+        obj = tb.get(self.value)
+        asb.write( ("MOV EBX, ") ) 
+        asb.write( "[EBP-{0}]\n".format(obj[2]))
+        return obj[0]
 
 class Identifier(Node):
-    def __init__(self, value):
-        self.value     = value
- 
+    
     def Evaluate(self):
         return self.value
 
-
 class Stmts(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
         for element in self.children:
+            asb.write("\n")
             element.Evaluate()
-
 
 class NoOp(Node):
     
     def Evaluate(self):
         pass
 
-
 class WhileOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
-        while(self.children[0].Evaluate()):
+        asb.loopASB(self._id, "init")
+
+        #while(self.children[0].Evaluate()):
+        condition = self.children[0].Evaluate()
+        asb.loopASB(self._id, "endCondition")
+        
+        if(condition):
             self.children[1].Evaluate()
 
-
+        asb.loopASB(self._id, "end")
+        
 class ifOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
-        if(self.children[0].Evaluate()):
+        condition = self.children[0].Evaluate()
+        if(condition):
+            asb.write("JE LABEL_" + str(self._id))
             self.children[1].Evaluate()
-            
+        
+        asb.write("LABEL_" + str(self._id))   
         elif len(self.children) == 3:
             self.children[2].Evaluate()
 
 class InputOp(Node):
-    def __init__(self, value):
-        self.value     = value 
          
     def Evaluate(self):
         return int(input("Input: "))
 
-
 class Tp(Node):
-    def __init__(self, value):
-        self.value     = value
          
     def Evaluate(self):
-        if self.value == "INTEGER":
-            return "<class 'int'>"
-        
-        elif self.value == "BOOLEAN":
-            return "<class 'bool'>"
-        
         return self.value
 
 class VarDec(Node):
-    def __init__(self, children):
-        self.children  = children
        
     def Evaluate(self):
-        tb.sett(self.children[0].Evaluate(), "" ,self.children[1].Evaluate() )
+        name = self.children[0].Evaluate()
+        tp   = self.children[1].Evaluate()
+        
+        tb.sett(name, "" , tp)
+        asb.variableASB(name, tp.lower() , tb.get(name)[2])
         
 class BolOP(Node):
-    def __init__(self, value):
-        self.value     = value
- 
+   
     def Evaluate(self):
-        return self.value
-
-
-
+        return self.value   

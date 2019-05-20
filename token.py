@@ -12,7 +12,7 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
-        reserved = ["PRINT", "BEGIN", "END", "WHILE", "THEN", "IF", "INPUT", "SUB", "MAIN", "DIN", "AS"]
+        reserved = ["PRINT", "BEGIN", "END", "WHILE", "THEN", "IF", "INPUT", "SUB", "MAIN", "DIM", "AS"]
         ops = ["=", "+", "-", "*", "/", "(", ")", ">", "<"]
         value = ""
         type = ""
