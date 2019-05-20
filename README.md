@@ -31,66 +31,66 @@
 
 ### Compiler EBNF
 
-program 
-    : SUB, MAIN, "(", ")", endline {statement, endline}, END, SUB
-    ;
+program <br/>
+    : SUB, MAIN, "(", ")", endline {statement, endline}, END, SUB<br/>
+    ;<br/>
 
 statement   
-    : IF, rel_expression, THEN, endline, {statement, endline}* ,{else, endline, {statement, endline}} , END , IF 
-    | identifier, "=", rel_expression 
-    | print, rel_expression
-    | DIN, identifier, AS, type
-    | WHILE, rel_expression, endline, {statement, endline}*, WEND 
+    : IF, rel_expression, THEN, endline, {statement, endline}* ,{else, endline, {statement, endline}} , END , IF <br/>
+    | identifier, "=", rel_expression <br/>
+    | print, rel_expression<br/>
+    | DIN, identifier, AS, type<br/>
+    | WHILE, rel_expression, endline, {statement, endline}*, WEND <br/>
     ;
 
-rel_expression 
-    : expression, { ("=" | ">" | <), expression } 
-    ;
+rel_expression <br/>
+    : expression, { ("=" | ">" | <), expression } <br/>
+    ;<br/>
 
-expression 
-    : term, { ("+" | "-" | or), term } 
-    ;
+expression <br/>
+    : term, { ("+" | "-" | or), term } <br/>
+    ;<br/>
 
-term 
-    : fator, { ("*" | "/"| and), fator } 
-    ;
+term <br/>
+    : fator, { ("*" | "/"| and), fator } <br/>
+    ;<br/>
 
-factor 
-    : ("+" | "-" | not), fator 
-    | num 
-    | "(", rel_expression, ")" 
-    | identifier 
-    | input 
-    | (True | False)
-    ;
+factor <br/>
+    : ("+" | "-" | not), fator<br/> 
+    | num <br/>
+    | "(", rel_expression, ")"<br/> 
+    | identifier <br/>
+    | input <br/>
+    | (True | False)<br/>
+    ;<br/>
 
-identifier 
-    : letter, { letter | digit | "_" } 
-    ;
+identifier<br/> 
+    : letter, { letter | digit | "_" } <br/> 
+    ;<br/>
 
-type
-    : (Integer | boolean)
-    ;
+type<br/>
+    : (Integer | boolean)<br/>
+    ;<br/>
 
-assignment 
-    : identifier, "=", expression 
-    ;
+assignment<br/> 
+    : identifier, "=", rel_expression<br/> 
+    ;<br/>
 
-print 
-    : "print", expression 
-    ;
+print <br/>
+    : "print", rel_expression<br/> 
+    ;<br/>
 
-num 
-    : digit, { digit } 
-    ;
+num <br/>
+    : digit, { digit }<br/> 
+    ;<br/>
 
-endline 
-    : \n
+endline <br/>
+    : \n<br/>
 
-letter 
-    : ( a | ... | z | A | ... | Z ) 
-    ;
+letter <br/>
+    : ( a | ... | z | A | ... | Z )<br/> 
+    ;<br/>
 
-digit 
-    : ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) 
-    ;
+digit <br/>
+    : ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) <br/>
+    ;<br/>

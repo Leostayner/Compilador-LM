@@ -75,8 +75,7 @@ class AssOP(Node):
         tp_tranformer = {"INTEGER": "<class 'int'>", "BOOLEAN": "<class 'bool'>"}
         
         name = self.children[0].Evaluate()
-        val  = self.children[1].Evaluate()
-        
+        val  = self.children[1].Evaluate()        
         tp   = tb.get(name)[1]
         
         if(tp_tranformer[tp] != str(type(val))): 

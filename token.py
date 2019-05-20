@@ -13,6 +13,7 @@ class Tokenizer:
 
     def selectNext(self):
         reserved = ["PRINT", "BEGIN", "END", "WHILE", "THEN", "IF", "INPUT", "SUB", "MAIN", "DIM", "AS"]
+        st_simbols = ["_"]
         ops = ["=", "+", "-", "*", "/", "(", ")", ">", "<"]
         value = ""
         type = ""
@@ -38,8 +39,8 @@ class Tokenizer:
                 self.position += 1
 
 
-            elif self.origin[self.position].isalpha():
-                while self.origin[self.position].isalpha():
+            elif self.origin[self.position].isalpha() or self.origin[self.position] in st_simbols:
+                while self.origin[self.position].isalpha() or self.origin[self.position] in st_simbols:
                     value += self.origin[self.position]
 
                     self.position += 1
