@@ -170,7 +170,7 @@ class Parser:
             Parser.checkType("char", "Syntatic Error: not is char")
             Parser.checkValue("AS", "Syntatic Error : not is AS")
             
-            return VarDec([Identifier(idt), Parser.Type()])
+            return VarDec(children = [Identifier(idt), Parser.Type()])
 
 
         return

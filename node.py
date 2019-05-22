@@ -3,68 +3,64 @@ from table import *
 tb = SymbolsTable()
 
 class Node:
-    def __init__(self):
-        self.value      #variant
-        self.children   #list of nodes
+    def __init__(self, value = False, children = []):
+        self.value      = value     #variant
+        self.children   = children  #list of nodes
 
     def Evaluate(self):
         pass
 
 class BinOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
  
     def Evaluate(self):
+        c1 = self.children[0].Evaluate()
+        c2 = self.children[1].Evaluate()
+
         if self.value == "/":
-            return self.children[0].Evaluate() // self.children[1].Evaluate()
+            return c1 // c2
 
         elif self.value == "*":
-            return self.children[0].Evaluate() * self.children[1].Evaluate()
+            return c1 * c2
 
         elif self.value == "+":
-            return self.children[0].Evaluate() + self.children[1].Evaluate()
+            return c1 + c2
 
         elif self.value == "-":
-            return self.children[0].Evaluate() - self.children[1].Evaluate()
+            return c1 - c2
         
         elif self.value == "=":
-            return self.children[0].Evaluate() == self.children[1].Evaluate()
+            return c1 == c2
 
         elif self.value == ">":
-            return self.children[0].Evaluate() > self.children[1].Evaluate()
+            return c1 > c2
         
         elif self.value == "<":
-            return self.children[0].Evaluate() < self.children[1].Evaluate()
+            return c1 < c2
         
         elif self.value == "OR":
-            return self.children[0].Evaluate() or self.children[1].Evaluate()
+            return c1 or c2
         
         elif self.value == "AND":
-            return self.children[0].Evaluate() and self.children[1].Evaluate()
+            return c1 and c2
             
             
-        
 class AssOP(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
  
     def Evaluate(self):
+        tp_tranformer = {"INTEGER": "<class 'int'>", "BOOLEAN": "<class 'bool'>"}
+    
+ 
         name = self.children[0].Evaluate()
         tp   = tb.get(name)[1]
         val  = self.children[1].Evaluate()
         
-        if(tp != str(type(val))): 
+        if(tp_tranformer[tp] != str(type(val))): 
             raise Exception("Semantic Error: {0} Invalid assigment type : {1}".format(name, str(type(val)) ))
         
         tb.sett(name, val, tp)
 
 
 class UnOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
  
     def Evaluate(self):
         if self.value   == "+"     : return + int(self.children[0].Evaluate())
@@ -74,32 +70,22 @@ class UnOp(Node):
 
 
 class IntVal(Node):
-    def __init__(self, value):
-        self.value     = value
  
     def Evaluate(self):
         return self.value
 
-
 class CharVal(Node):
-    def __init__(self, value):
-        self.value     = value
  
     def Evaluate(self):
         return tb.get(self.value)[0]
 
 class Identifier(Node):
-    def __init__(self, value):
-        self.value     = value
  
     def Evaluate(self):
         return self.value
 
 
 class Stmts(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
         for element in self.children:
@@ -113,9 +99,6 @@ class NoOp(Node):
 
 
 class WhileOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
         while(self.children[0].Evaluate()):
@@ -123,9 +106,6 @@ class WhileOp(Node):
 
 
 class ifOp(Node):
-    def __init__(self, value, children):
-        self.value     = value 
-        self.children  = children
          
     def Evaluate(self):
         if(self.children[0].Evaluate()):
@@ -135,39 +115,27 @@ class ifOp(Node):
             self.children[2].Evaluate()
 
 class InputOp(Node):
-    def __init__(self, value):
-        self.value     = value 
          
     def Evaluate(self):
         return int(input("Input: "))
 
 
 class Tp(Node):
-    def __init__(self, value):
-        self.value     = value
          
     def Evaluate(self):
-        if self.value == "INTEGER":
-            return "<class 'int'>"
-        
-        elif self.value == "BOOLEAN":
-            return "<class 'bool'>"
-        
         return self.value
 
 class VarDec(Node):
-    def __init__(self, children):
-        self.children  = children
        
     def Evaluate(self):
         tb.sett(self.children[0].Evaluate(), "" ,self.children[1].Evaluate() )
         
 class BolOP(Node):
-    def __init__(self, value):
-        self.value     = value
  
     def Evaluate(self):
         return self.value
 
 
 
+class FuncDec(Node):
+    def Evaluate():
