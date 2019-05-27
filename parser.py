@@ -179,21 +179,28 @@ class Parser:
 
     @staticmethod
     def program():
-        Parser.checkValue("SUB" , "Error not SUB")
-        Parser.checkValue("MAIN", "Error not MAIN")
-        Parser.checkValue("("   , "Error not (")
-        Parser.checkValue(")"   , "Error not )")
-        Parser.checkType("endLine", "Error not endLine1")
-        
-        list_c = []
-        while (Parser.tokens.actual.value != "END"):
-            list_c.append(Parser.statement())
-            Parser.checkType("endLine", "Error not endLine2")
+        Parser.FuncDec()
 
-        Parser.tokens.selectNext()
+        Parser.SubDec()
 
-        Parser.checkValue("SUB", "Error not SUB")
-        return Stmts("Statement", list_c)
+
+
+
+#        Parser.checkValue("SUB" , "Error not SUB")
+#        Parser.checkValue("MAIN", "Error not MAIN")
+#        Parser.checkValue("("   , "Error not (")
+#        Parser.checkValue(")"   , "Error not )")
+#        Parser.checkType("endLine", "Error not endLine1")
+#        
+#        list_c = []
+#        while (Parser.tokens.actual.value != "END"):
+#            list_c.append(Parser.statement())
+#            Parser.checkType("endLine", "Error not endLine2")
+#
+#        Parser.tokens.selectNext()
+#
+#        Parser.checkValue("SUB", "Error not SUB")
+#        return Stmts("Statement", list_c)
         
 
 
@@ -217,3 +224,46 @@ class Parser:
             return Tp(value)
         
         raise  Exception("Syntatic Error : Invalide Type") 
+
+
+
+
+    @staticmethod
+    def funcDec(): #Arrumar nodes--------------------
+        Parser.checkValue("FUNCTION", "Error funcDec")
+        idt = Parser.tokens.actual.value()
+        Parser.tokens.selectNext()
+        Parser.checkValue("(", "Error funcDec2")
+    
+        if(Parser.tokens.actual.value != ")"):    
+            idt = Parser.tokens.actual.value
+            Parser.tokens.checkValue("AS", "Error funcDec3")
+            Type()
+            
+            while (Parser.tokens.actual.value == ","):
+                Parser.tokens.selectNext()
+                idt = Parser.tokens.actual.value
+                Parser.tokens.checkValue("AS", "Error funcDec3")
+                Type()
+
+        Parser.checkValue(")", "Error funcDec4")
+        Parser.checkValue("AS","Error funcDec5")
+
+        Parser.Type()
+        
+        Parser.checkValue("endLine", "Error funcDec6")
+        
+        while(Parser.tokens.actual.value != "END"):
+            Parser.statement()
+            Parser.tokens.checkType("endLine")
+        
+        Parser.checkValue("END", "funcDec7")
+        Parser.checkValue("FUNCTION", "funcDec8")
+
+
+    @staticmethod
+    def funcSub(): #Arrumar nodes--------------------
+        Parser.checkValue("SUB")
+        idt = Parser.tokens.actual.vale
+        Parser.tokens.checkValue("(", "Error funcDec9")
+        #------------- continuar
