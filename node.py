@@ -91,10 +91,12 @@ class UnOp(Node):
 
         if   self.value == "+"     : return + int(c)
         elif self.value == "-"     : return - int(c)
+        
         elif self.value == "NOT"   : 
-            asb.write("NOT EBX\n")
-          
+            if (c): asb.write("MOV EBX, 0\n") 
+            else  : asb.write("MOV EBX, 1\n")
             return not int(c)
+        
         elif self.value == "PRINT" : asb.printASB()
 
 class IntVal(Node):

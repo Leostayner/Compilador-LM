@@ -78,10 +78,48 @@ _start :
     MOV EBP, ESP ; estabelece um novo basepointer
 
 ; codigo gerado pelo compilador
-PUSH DWORD 0; Dim bf as boolean [EBP-4]
-MOV EBX, False
+PUSH DWORD 0; Dim bt as boolean [EBP-4]
+PUSH DWORD 0; Dim bf as boolean [EBP-8]
+MOV EBX, True
 MOV [EBP-4], EBX
+MOV EBX, False
+MOV [EBP-8], EBX
+MOV EBX, [EBP-8]
+PUSH EBX
 MOV EBX, [EBP-4]
+POP EAX
+AND EAX, EBX
+MOV EBX, EAX
+PUSH EBX
+CALL print
+POP EBX
+MOV EBX, [EBP-8]
+PUSH EBX
+MOV EBX, [EBP-4]
+POP EAX
+OR EAX, EBX
+MOV EBX, EAX
+PUSH EBX
+CALL print
+POP EBX
+MOV EBX, [EBP-8]
+MOV EBX, 1
+MOV EBX, 0
+PUSH EBX
+CALL print
+POP EBX
+MOV EBX, [EBP-4]
+PUSH EBX
+MOV EBX, [EBP-8]
+POP EAX
+AND EAX, EBX
+MOV EBX, EAX
+PUSH EBX
+MOV EBX, [EBP-8]
+POP EAX
+OR EAX, EBX
+MOV EBX, EAX
+MOV EBX, 1
 PUSH EBX
 CALL print
 POP EBX
