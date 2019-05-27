@@ -134,8 +134,19 @@ class BolOP(Node):
  
     def Evaluate(self):
         return self.value
+x
 
-
-
+#FuncDec: possui 2 filhos: VarDec e Statements. Os argumentos da declaração devem ser incorporados
+#ao VarDec, incluindo o próprio nome da função e seu tipo correspondente. O Evaluate() apenas cria
+#uma variável na SymbolTable atual, sendo o nome da variável o nome da função, o valor apontando
+#para o próprio nó FuncDec e o tipo será FUNCTION
 class FuncDec(Node):
+    
     def Evaluate():
+        pass
+
+
+class FuncCall(Node):
+    
+    def Evaluate():
+        pass
