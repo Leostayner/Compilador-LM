@@ -1,9 +1,27 @@
-n = 5
-i = 2
-f = 1
 
-while (i < (n + 1)):
-    f = f * i
-    i = i + 1
+n = input()
+fizz = 0000
+buzz = 1111
+fizzbuzz = 00001111
+flag = True
 
-print (f)
+while n > 0:
+    tres = (n - (n / 3 * 3))
+    cinco = (n - (n / 5 * 5))
+
+    print (n)
+
+    if (tres == 0) and (cinco == 0):
+        print (fizzbuzz)
+        flag = False
+
+    if (tres == 0) and (flag == True):
+        print (fizz)
+        flag = False
+
+    if (cinco == 0) and (flag == True):
+        print (buzz)
+        flag = False
+    
+    flag = True
+    n = n - 1

@@ -20,19 +20,10 @@ class Assembler:
         st = ("{0} EBX\n"
               "MOV EBX, EAX\n").format(op)
         self.textASB += st
-    
-
-
-#    def assignmentASB(self, value, index):
-#        st = ("\nMOV EBX, {0}\n"
-#              "MOV [EBP-{1}] , EBX\n").format(value, index)
-#        
-#        self.textASB += st
-    
+        
     def conditionalASB(self, def_name):
         st = ("CMP EAX, EBX\n"
               "CALL {0}\n"
-              "CMP EBX, False\n"
               ).format(def_name)
     
         self.textASB += st
@@ -48,7 +39,6 @@ class Assembler:
             st = ("JMP LOOP_{0}\n"
                   "EXIT_{0}:\n").format(numberLoop)
         self.textASB += st
-
 
         
     def printASB(self):

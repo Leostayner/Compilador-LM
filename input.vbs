@@ -1,17 +1,8 @@
-Sub Main()
-Dim i as Integer
-Dim n as Integer
-Dim f as Integer
+Sub main()
+    ' bool ops
+    Dim bf as boolean
+    bf = False
 
-n = 5
-i = 2
-f = 1
-
-While i < n + 1
-f = f * i
-i = i + 1
-
-Wend
-print f
-
-End Sub
+    print bf
+   
+end sub

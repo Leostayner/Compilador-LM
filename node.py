@@ -91,15 +91,16 @@ class UnOp(Node):
 
         if   self.value == "+"     : return + int(c)
         elif self.value == "-"     : return - int(c)
-        elif self.value == "NOT"   : return not int(c)    
-
+        elif self.value == "NOT"   : 
+            asb.write("NOT EBX\n")
+          
+            return not int(c)
         elif self.value == "PRINT" : asb.printASB()
 
 class IntVal(Node):
     
     def Evaluate(self):
-        asb.write( ("MOV EBX, ") ) 
-        asb.write(str(self.value) + "\n")
+        asb.write( "MOV EBX, {0}\n".format(self.value) ) 
         return self.value
 
 class CharVal(Node):
@@ -144,18 +145,22 @@ class ifOp(Node):
          
     def Evaluate(self):
         condition = self.children[0].Evaluate()
-        if(condition):
-            asb.write("JE LABEL_" + str(self._id))
-            self.children[1].Evaluate()
         
-        asb.write("LABEL_" + str(self._id))   
-        if (not condition and len(self.children)) == 3:
+        asb.write("CMP EBX, False\n")
+        asb.write("JE EXIT_" + str(self._id) + "\n")
+        self.children[1].Evaluate()
+        
+        asb.write("EXIT_" + str(self._id) + ":\n")   
+        if (len(self.children) == 3): 
             self.children[2].Evaluate()
+
 
 class InputOp(Node):
          
     def Evaluate(self):
-        return int(input("Input: "))
+        tmp = int(input("Input: "))
+        asb.write( "MOV EBX, {0}\n".format(tmp) ) 
+        return tmp
 
 class Tp(Node):
          
@@ -172,6 +177,7 @@ class VarDec(Node):
         asb.variableASB(name, tp.lower() , tb.get(name)[2])
         
 class BolOP(Node):
-   
+
     def Evaluate(self):
-        return self.value   
+        asb.write( "MOV EBX, {0}\n".format(self.value) ) 
+        return self.value

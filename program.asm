@@ -78,46 +78,10 @@ _start :
     MOV EBP, ESP ; estabelece um novo basepointer
 
 ; codigo gerado pelo compilador
-PUSH DWORD 0; Dim i as integer [EBP-4]
-PUSH DWORD 0; Dim n as integer [EBP-8]
-PUSH DWORD 0; Dim f as integer [EBP-12]
-MOV EBX, 5
-MOV [EBP-8], EBX
-MOV EBX, 2
+PUSH DWORD 0; Dim bf as boolean [EBP-4]
+MOV EBX, False
 MOV [EBP-4], EBX
-MOV EBX, 1
-MOV [EBP-12], EBX
-LOOP_35:
 MOV EBX, [EBP-4]
-PUSH EBX
-MOV EBX, [EBP-8]
-PUSH EBX
-MOV EBX, 1
-POP EAX
-ADD EAX, EBX
-MOV EBX, EAX
-POP EAX
-CMP EAX, EBX
-CALL binop_jl
-CMP EBX, False
-JE EXIT_35
-MOV EBX, [EBP-12]
-PUSH EBX
-MOV EBX, [EBP-4]
-POP EAX
-IMUL EBX
-MOV EBX, EAX
-MOV [EBP-12], EBX
-MOV EBX, [EBP-4]
-PUSH EBX
-MOV EBX, 1
-POP EAX
-ADD EAX, EBX
-MOV EBX, EAX
-MOV [EBP-4], EBX
-JMP LOOP_35
-EXIT_35:
-MOV EBX, [EBP-12]
 PUSH EBX
 CALL print
 POP EBX
