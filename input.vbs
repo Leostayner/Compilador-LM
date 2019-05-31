@@ -1,19 +1,15 @@
-Sub main()
-    Dim teste_bool as boolean
-    Dim teste_int as integer
-    teste_bool = True
-    teste_int = 10
+Function Soma(x as Integer, y as Integer) as Integer
+    Dim a as Integer
+    a = x + y
+    Print a
+    Soma = a
+End Function
 
-    if teste_bool then
-        print teste_int + 10
-    end if
-
-    while (teste_int > 0) and teste_bool = True
-        print teste_int
-        teste_int = teste_int - 1
-    wend
-
-    teste_int = input
-    print teste_int
-
+Sub Main()
+    Dim a as Integer
+    Dim b as Integer
+    a = 3
+    b = Soma(a, 4)
+    Print a
+    Print b
 End Sub

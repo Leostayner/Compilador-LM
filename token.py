@@ -12,7 +12,7 @@ class Tokenizer:
         self.actual   = self.origin[self.position]   #o último token separando
 
     def selectNext(self):
-        reserved = ["PRINT", "BEGIN", "END", "WHILE", "THEN", "IF", "INPUT", "SUB", "MAIN", "DIM", "AS", "FUNCTION"]
+        reserved = ["PRINT", "BEGIN", "END", "WHILE", "THEN", "IF", "INPUT", "SUB", "DIM", "AS", "FUNCTION", "CALL"]
         st_simbols = ["_"]
         ops = ["=", "+", "-", "*", "/", "(", ")", ">", "<"]
         value = ""
@@ -38,6 +38,9 @@ class Tokenizer:
                 type = "endLine"
                 self.position += 1
 
+            elif self.origin[self.position] == ",":
+                value = self.origin[self.position]
+                self.position += 1
 
             elif self.origin[self.position].isalpha() or self.origin[self.position] in st_simbols:
                 while self.origin[self.position].isalpha() or self.origin[self.position] in st_simbols:

@@ -8,28 +8,14 @@ class Parser:
         Parser.tokens = Tokenizer(code)
         Parser.tokens.selectNext()
         result = Parser.program()
-        
-        if(Parser.tokens.actual.type == "endLine"):
-            Parser.tokens.selectNext()
-
-        if(Parser.tokens.actual.type == 'EOF'):
-            return result
-
-        else:
-            raise Exception("Syntactic Error: Last token is not EOP")
-
+        return result
     
     def checkType(type, textError):
-        if(Parser.tokens.actual.type != type):
-            raise Exception(textError)
-
+        if(Parser.tokens.actual.type != type): raise Exception(textError)
         Parser.tokens.selectNext()
     
-
     def checkValue(value, textError):
-        if(Parser.tokens.actual.value != value):
-            raise Exception(textError)
-        
+        if(Parser.tokens.actual.value != value): raise Exception(textError)
         Parser.tokens.selectNext()
         
     
@@ -81,8 +67,24 @@ class Parser:
             return UnOp(temp, [Parser.factor()])
 
         elif Parser.tokens.actual.type == "char":
+            l_c = []
             idt = Parser.tokens.actual.value
             Parser.tokens.selectNext()
+            
+            if(Parser.tokens.actual.value == "("):
+                Parser.tokens.selectNext()
+
+                if(Parser.tokens.actual.value != ")"):
+                    while True:
+                        l_c.append(Parser.relExpression())
+                        if(Parser.tokens.actual.value == ","): 
+                            Parser.tokens.selectNext()
+                            continue
+                        break
+                
+                Parser.checkValue(")", "Error factor 6")
+                return FuncCall(idt, l_c)
+
             return CharVal(idt)
 
 
@@ -133,7 +135,7 @@ class Parser:
         elif(Parser.tokens.actual.type == "char"):
             idt = Identifier(Parser.tokens.actual.value)
             Parser.tokens.selectNext()
-        
+
             Parser.checkValue("=", "Error: '{0}' is not = after identifier".format(Parser.tokens.actual.value))
             
             return AssOP("=", [idt, Parser.relExpression()])
@@ -172,6 +174,23 @@ class Parser:
             
             return VarDec(children = [Identifier(idt), Parser.Type()])
 
+        #Call --- contertar tokens
+        elif(Parser.tokens.actual.value == "CALL"):
+            lc = []
+            Parser.tokens.selectNext()
+            
+            callName = Parser.tokens.actual.value
+            Parser.checkType("char", "Error call1")
+            Parser.checkValue("(","Error call 2")
+            
+            if(Parser.tokens.actual.value != "("):
+                while (True):
+                    l_c.append(Parser.relExpression())
+                    if(Parser.tokens.actual.value == ","): continue
+                    break
+
+            Parser.checkValue("(", "Error call 3")
+            return FuncCall(callName, l_c)
 
         return
 
@@ -179,31 +198,28 @@ class Parser:
 
     @staticmethod
     def program():
-        Parser.FuncDec()
+        list_c = []
+        while(Parser.tokens.actual.type != 'EOF'):
+            if(Parser.tokens.actual.value == "SUB"):
+                list_c.append(Parser.funcSub())
 
-        Parser.SubDec()
+                if(Parser.tokens.actual.type == "endLine"):
+                    Parser.tokens.selectNext()
+         
+            elif(Parser.tokens.actual.value == "FUNCTION"):
+                list_c.append(Parser.funcDec())
 
+                if(Parser.tokens.actual.type == "endLine"):
+                    Parser.tokens.selectNext()
 
-
-
-#        Parser.checkValue("SUB" , "Error not SUB")
-#        Parser.checkValue("MAIN", "Error not MAIN")
-#        Parser.checkValue("("   , "Error not (")
-#        Parser.checkValue(")"   , "Error not )")
-#        Parser.checkType("endLine", "Error not endLine1")
-#        
-#        list_c = []
-#        while (Parser.tokens.actual.value != "END"):
-#            list_c.append(Parser.statement())
-#            Parser.checkType("endLine", "Error not endLine2")
-#
-#        Parser.tokens.selectNext()
-#
-#        Parser.checkValue("SUB", "Error not SUB")
-#        return Stmts("Statement", list_c)
+            else:
+                print(Parser.tokens.actual.type) 
+            
+                raise Exception("Syntactic Error: Last token is not EOP")
         
-
-
+        list_c.append(FuncCall("MAIN"))
+        return Stmts("STATEMENTS", list_c)
+        
     @staticmethod
     def relExpression():
         c0 = Parser.parseExpression()
@@ -222,48 +238,83 @@ class Parser:
         if value in ["INTEGER" , "BOOLEAN"]:
             Parser.tokens.selectNext()
             return Tp(value)
-        
         raise  Exception("Syntatic Error : Invalide Type") 
 
 
 
-
     @staticmethod
-    def funcDec(): #Arrumar nodes--------------------
-        Parser.checkValue("FUNCTION", "Error funcDec")
-        idt = Parser.tokens.actual.value()
-        Parser.tokens.selectNext()
-        Parser.checkValue("(", "Error funcDec2")
-    
-        if(Parser.tokens.actual.value != ")"):    
-            idt = Parser.tokens.actual.value
-            Parser.tokens.checkValue("AS", "Error funcDec3")
-            Type()
-            
-            while (Parser.tokens.actual.value == ","):
-                Parser.tokens.selectNext()
-                idt = Parser.tokens.actual.value
-                Parser.tokens.checkValue("AS", "Error funcDec3")
-                Type()
+    def funcDec():
+        l_c  = [VarDec()]
+        l_cn = []
 
+        Parser.checkValue("FUNCTION", "Error funcDec")
+        funcName = Parser.tokens.actual.value
+
+        Parser.checkType("char", "Error funcDec")
+        Parser.checkValue("(", "Error funcDec2")
+
+
+        if(Parser.tokens.actual.value != ")"):                
+            while(True):
+                idt = Parser.tokens.actual.value
+                Parser.checkType("char", "Error a1")
+                Parser.checkValue("AS", "Error funcDec3")
+                l_c.append(VarDec(children = [Identifier(idt), Parser.Type()]))
+                
+                if(Parser.tokens.actual.value == ","):
+                    Parser.tokens.selectNext()
+                    continue
+                break
+        
         Parser.checkValue(")", "Error funcDec4")
         Parser.checkValue("AS","Error funcDec5")
+        l_c[0] = (VarDec(children = [Identifier(funcName), Parser.Type()]))
 
-        Parser.Type()
-        
-        Parser.checkValue("endLine", "Error funcDec6")
-        
+        Parser.checkType("endLine", "Error funcDec6")
+
         while(Parser.tokens.actual.value != "END"):
-            Parser.statement()
-            Parser.tokens.checkType("endLine")
+            l_cn.append(Parser.statement())
+            Parser.checkType("endLine", "erro")
         
         Parser.checkValue("END", "funcDec7")
         Parser.checkValue("FUNCTION", "funcDec8")
+        
+        l_c.append(Stmts("STATEMENTS", l_cn))
+        return FuncDec(funcName, l_c)
 
 
     @staticmethod
-    def funcSub(): #Arrumar nodes--------------------
-        Parser.checkValue("SUB")
-        idt = Parser.tokens.actual.vale
-        Parser.tokens.checkValue("(", "Error funcDec9")
-        #------------- continuar
+    def funcSub():
+        l_c  = []
+        l_cn = []
+
+        Parser.checkValue("SUB", "Mensagem de Erro")
+        subName = Parser.tokens.actual.value
+        
+        Parser.checkType("char", "Error funcDec")
+        Parser.checkValue("(", "Error funcSub")
+        
+        if(Parser.tokens.actual.value != ")"):                
+            while(True):
+                idt = Parser.tokens.actual.value
+                Parser.checktype("char", "Error funcDec3")
+                Parser.checkValue("AS", "Error funcDec3")
+                l_c.append(VarDec(children = [Identifier(idt), Parser.Type()]))
+
+                if(Parser.tokens.actual.value == ","):
+                    Parser.tokens.selectNext()
+                    continue
+                break
+
+        Parser.checkValue(")", "Error funcDec4")
+        Parser.checkType("endLine", "Error funcSub4")
+
+        while(Parser.tokens.actual.value != "END"):
+            l_cn.append(Parser.statement())
+            Parser.checkType("endLine", "asda")
+       
+        Parser.checkValue("END", "funcSub5")
+        Parser.checkValue("SUB", "funcSub6")
+
+        l_c.append(Stmts("STATEMENTS", l_cn))
+        return FuncSub(subName, l_c)
