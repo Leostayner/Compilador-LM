@@ -21,6 +21,6 @@ def main():
                 result.Evaluate(SymbolsTable(None))
 
     #except Exception as err:
-        #print(err)
+    #    print(err)
 
 main()

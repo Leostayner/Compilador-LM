@@ -107,7 +107,7 @@ class VarDec(Node):
     def Evaluate(self, table):
         table.sett(self.children[0].Evaluate(table), "" ,self.children[1].Evaluate(table) )
         
-class BolOP(Node):
+class BoolOP(Node):
  
     def Evaluate(self, table):
         return self.value
@@ -136,20 +136,20 @@ SymbolTable, atribuindo os valores dos argumentos de entrada e executando o bloc
 class FuncCall(Node):
     
     def Evaluate(self, table):        
-        table     = SymbolsTable(table)
+        table    = SymbolsTable(table)
         funcNode = table.get(self.value)[0]  
         
         if(len(funcNode.children[1:-1]) != len(self.children)):
             raise Exception("Semantic Error: Invalid arguments numbers")
         
-        l = []
+        listVar = []
         for c in funcNode.children[:-1]:
             c.Evaluate(table)
-            l.append(c.children[0].Evaluate(table))
+            listVar.append(c.children[0].Evaluate(table))
         
-        for i, c in enumerate(self.children):
+        for index, c in enumerate(self.children):
             value = c.Evaluate(table)
-            table.sett(l[i + 1], value, type(value))
+            table.sett(listVar[index + 1], value, type(value))
 
         funcNode.children[-1].Evaluate(table)
-        return table.get("SOMA")[0]
+        return table.get(self.value)[0]

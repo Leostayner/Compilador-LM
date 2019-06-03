@@ -50,9 +50,9 @@ class Parser:
             Parser.tokens.selectNext()
 
             if(temp == "TRUE"):
-                return BolOP(True)
+                return BoolOP(True)
             
-            return BolOP(False)
+            return BoolOP(False)
 
         elif(Parser.tokens.actual.value == "("):
             Parser.tokens.selectNext()
@@ -176,20 +176,22 @@ class Parser:
 
         #Call --- contertar tokens
         elif(Parser.tokens.actual.value == "CALL"):
-            lc = []
+            l_c = []
             Parser.tokens.selectNext()
             
             callName = Parser.tokens.actual.value
             Parser.checkType("char", "Error call1")
             Parser.checkValue("(","Error call 2")
             
-            if(Parser.tokens.actual.value != "("):
+            if(Parser.tokens.actual.value != ")"):
                 while (True):
                     l_c.append(Parser.relExpression())
-                    if(Parser.tokens.actual.value == ","): continue
+                    if(Parser.tokens.actual.value == ","): 
+                        Parser.tokens.selectNext()
+                        continue
                     break
 
-            Parser.checkValue("(", "Error call 3")
+            Parser.checkValue(")", "Error call 3")
             return FuncCall(callName, l_c)
 
         return
@@ -274,7 +276,7 @@ class Parser:
 
         while(Parser.tokens.actual.value != "END"):
             l_cn.append(Parser.statement())
-            Parser.checkType("endLine", "erro")
+            Parser.checkType("endLine", "erro5")
         
         Parser.checkValue("END", "funcDec7")
         Parser.checkValue("FUNCTION", "funcDec8")
