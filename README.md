@@ -4,6 +4,14 @@
 ![Diagrama1](./Imgs/PROGRAM.png)
 <br>
 
+### FuncDec
+![Diagrama2](./Imgs/FuncDec.png)
+<br>
+
+### SubDec
+![Diagrama2](./Imgs/SubDec.png)
+<br>
+
 ### Statement
 ![Diagrama2](./Imgs/STATEMENT.png)
 <br>
