@@ -43,11 +43,14 @@ program <br/>
     : func_dec | sub_dec<br/>
     ;<br/>
 
-func_dec = "FUNCTION", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "AS", type, "\n", {(statement, "\n")}*, "END", "FUNCTION" ;
+func_dec <br/>
+    : "FUNCTION", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "AS", type, "\n", {(statement, "\n")}*, "END", "FUNCTION" ;
+    ;<br/>
 
 
-sub_dec = "SUB", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "\n", {(statement, "\n")}*, "END", "SUB" ;
-
+sub_dec  <br/>
+    : "SUB", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "\n", {(statement, "\n")}*, "END", "SUB" ;
+    ;<br/>
 
 statement   
     : IF, rel_expression, THEN, endline, {statement, endline}* ,{else, endline, {statement, endline}} , END , IF <br/>
