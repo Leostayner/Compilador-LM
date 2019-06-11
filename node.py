@@ -1,5 +1,7 @@
 from SymbolsTable import * 
 
+tp_tranformer = {"<class 'int'>": "INTEGER", "<class 'bool'>": "BOOLEAN"}
+    
 
 class Node:
     def __init__(self, value = False, children = []):
@@ -28,19 +30,10 @@ class BinOp(Node):
 class AssOP(Node):
  
     def Evaluate(self, table):
-        tp_tranformer = {"INTEGER": "<class 'int'>", "BOOLEAN": "<class 'bool'>"}
-    
         name = self.children[0].Evaluate(table)
-        tp   = table.get(name)[1]
         val  = self.children[1].Evaluate(table)
-           
-        if(tp_tranformer[tp] != str(type(val))): 
-           
-            
-            raise Exception("Semantic Error: {0} Invalid assigment type : {1}".format(name, str(type(val)) ))
         
-        table.sett(name, val, tp)
-
+        table.sett(name, val, tp_tranformer[str(type(val))])
 
 class UnOp(Node):
  
@@ -105,7 +98,7 @@ class Tp(Node):
 class VarDec(Node):
        
     def Evaluate(self, table):
-        table.sett(self.children[0].Evaluate(table), "" ,self.children[1].Evaluate(table) )
+        table.sett(self.children[0].Evaluate(table), None ,self.children[1].Evaluate(table))
         
 class BoolOP(Node):
  
@@ -121,12 +114,12 @@ para o próprio nó FuncDec e o tipo será FUNCTION
 class FuncDec(Node):
 
     def Evaluate(self, table):
-        table.sett(self.value, self, "FUNCTION")
+        table.sett(self.value + "_node", self, "FUNCTION")
 
-class FuncSub(Node):
+class SubDec(Node):
 
     def Evaluate(self, table):
-        table.sett(self.value, self, "SUB")
+        table.sett(self.value + "_node", self, "SUB")
 
 """
 FuncCall: possui n filhos do tipo identificador ou expressão - são os argumentos da chamada. O
@@ -137,8 +130,10 @@ class FuncCall(Node):
     
     def Evaluate(self, table):        
         table    = SymbolsTable(table)
-        funcNode = table.get(self.value)[0]  
-        
+        dicNode  = table.get(self.value + "_node")
+        funcNode = dicNode[0]
+        typeNode = dicNode[1]
+
         if(len(funcNode.children[1:-1]) != len(self.children)):
             raise Exception("Semantic Error: Invalid arguments numbers")
         
@@ -146,10 +141,15 @@ class FuncCall(Node):
         for c in funcNode.children[:-1]:
             c.Evaluate(table)
             listVar.append(c.children[0].Evaluate(table))
-        
+            
         for index, c in enumerate(self.children):
             value = c.Evaluate(table)
-            table.sett(listVar[index + 1], value, type(value))
-
+            table.sett(listVar[index + 1], value, tp_tranformer[str(type(value))])
+            
         funcNode.children[-1].Evaluate(table)
-        return table.get(self.value)[0]
+        
+        if typeNode == "SUB":
+            pass
+
+        elif typeNode == "FUNCTION":
+            return table.get(self.value)[0]

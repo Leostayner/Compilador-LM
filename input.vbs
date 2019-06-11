@@ -1,27 +1,23 @@
-Function Soma(x as Integer, y as Integer) as Integer
-    Dim a as Integer
-    a = x + y
-    Print a
-    Soma = a
-End Function
-
-Function R() as Integer
-    print 5
-End Function
-
-Function recursao(x as Integer) as Integer
-    print(x)
+Function fibonacci(n as integer) as integer
+    ' codigo do raphael costa
+    dim flag as boolean
     
+    flag = false
+    if n = 0 then
+        fibonacci = 1
+        flag = true
+    end if
+
+    if n = 1 then 
+        fibonacci = 1
+        flag = true
+    end if
+
+    if flag = false then
+        fibonacci = fibonacci(n-2) + fibonacci(n-1)
+    end if
+
 End Function
-
-
 Sub Main()
-    Dim a as Integer
-    Dim b as Integer
-    a = 3
-    Call R()
-    Call recursao(5)
-    b = Soma(a, 4)
-    Print a
-    Print b
+    print fibonacci(5)
 End Sub

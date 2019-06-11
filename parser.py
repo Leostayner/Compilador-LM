@@ -287,7 +287,7 @@ class Parser:
 
     @staticmethod
     def funcSub():
-        l_c  = []
+        l_c  = [VarDec()]
         l_cn = []
 
         Parser.checkValue("SUB", "Mensagem de Erro")
@@ -299,7 +299,7 @@ class Parser:
         if(Parser.tokens.actual.value != ")"):                
             while(True):
                 idt = Parser.tokens.actual.value
-                Parser.checktype("char", "Error funcDec3")
+                Parser.checkType("char", "Error funcDec3")
                 Parser.checkValue("AS", "Error funcDec3")
                 l_c.append(VarDec(children = [Identifier(idt), Parser.Type()]))
 
@@ -318,5 +318,6 @@ class Parser:
         Parser.checkValue("END", "funcSub5")
         Parser.checkValue("SUB", "funcSub6")
 
+        l_c[0] = (VarDec(children = [Identifier(subName), Tp(None)]))
         l_c.append(Stmts("STATEMENTS", l_cn))
-        return FuncSub(subName, l_c)
+        return SubDec(subName, l_c)
