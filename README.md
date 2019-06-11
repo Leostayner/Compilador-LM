@@ -40,8 +40,14 @@
 ### Compiler EBNF
 
 program <br/>
-    : SUB, MAIN, "(", ")", endline {statement, endline}, END, SUB<br/>
+    : func_dec | sub_dec<br/>
     ;<br/>
+
+func_dec = "FUNCTION", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "AS", type, "\n", {(statement, "\n")}*, "END", "FUNCTION" ;
+
+
+sub_dec = "SUB", identifier, "(", {(identifier, "AS", type) | ;}*, ")", "\n", {(statement, "\n")}*, "END", "SUB" ;
+
 
 statement   
     : IF, rel_expression, THEN, endline, {statement, endline}* ,{else, endline, {statement, endline}} , END , IF <br/>
@@ -49,6 +55,7 @@ statement
     | print, rel_expression<br/>
     | DIN, identifier, AS, type<br/>
     | WHILE, rel_expression, endline, {statement, endline}*, WEND <br/>
+    | CALL, identifier, (, {(rel_expression| ;)}* , )
     ;
 
 rel_expression <br/>
@@ -67,7 +74,7 @@ factor <br/>
     : ("+" | "-" | not), fator<br/> 
     | num <br/>
     | "(", rel_expression, ")"<br/> 
-    | identifier <br/>
+    | {identifier | (, {rel_expression , ;}* ,)}<br/>
     | input <br/>
     | (True | False)<br/>
     ;<br/>
